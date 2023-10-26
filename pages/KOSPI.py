@@ -44,7 +44,7 @@ with col2 :
 def run_query(query):
     df = pd.read_sql_query(query,con=conn)
     return df
-query2=f"SELECT * from airflow.stock_market_tbl where \"itmsNm\" = '{option[:-8]}' order by \"basDt\" "
+query2=f"SELECT * from stockprice_info.kospi_stockprice_info where \"itmsNm\" = '{option[:-8]}' order by \"basDt\" "
 df = run_query(query2)
 
 ### 검색 결과 데이터 프레임 생성 
@@ -52,7 +52,7 @@ df = run_query(query2)
 def run_query(query):
     df = pd.read_sql_query(query,con=conn)
     return df
-query2=f"SELECT * from airflow.stock_market_tbl where \"itmsNm\" = '{option[:-8]}' order by \"basDt\" "
+query2=f"SELECT * from stockprice_info.kospi_stockprice_info where \"itmsNm\" = '{option[:-8]}' order by \"basDt\" "
 df = run_query(query2)
 
 ### class 호출
