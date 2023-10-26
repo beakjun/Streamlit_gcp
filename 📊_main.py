@@ -19,5 +19,8 @@ def init_connection():
 
 conn = init_connection()
 
+col1, col2, col3 =st.columns(3)
+col1.metric("KOSPI",200)
+col2.metric("KOSDAQ",100)
+col3.metric("KOSPI200",10)
 
-st.text("hello streamlits1111231")
