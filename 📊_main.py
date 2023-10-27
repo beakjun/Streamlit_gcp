@@ -17,10 +17,39 @@ st.title("📊주가 현황")
 def init_connection():
     return psycopg2.connect(**st.secrets["postgres"])
 
-
+@st.cache_data
 def run_query(query):
     df = pd.read_sql_query(query,con=conn)
     return df
+with init_connection() as conn:
+    dt = run_query('select "basDt" from stockprice_info.stockprice_stat limit 1').iat[0,0]
+
+md=dt.strftime("%m.%d")
+ymd=dt.strftime("%Y.%m.%d")
+
+
+st.subheader(f"주요 증시 현황 ({md})")
+
+kospi_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KOSPI&page=1'
+kospi200_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KPI200&page=1'
+kosdaq_url ='https://finance.naver.com/sise/sise_index_day.naver?code=KOSDAQ&page=1'
+
+def display_metric2(url,ymd,col,w):
+    df = pd.read_html(url,encoding='cp949')[0]
+    df = df[df['날짜']==ymd]
+    title = w
+    value = df['체결가']
+    delta = f"{df['등락률'].iat[0]}({df['전일비'].iat[0]})"
+    col.metric(title, value, delta, delta_color="inverse")
+    
+
+col1,col2,col3=st.columns(3)
+display_metric2(kospi_url,ymd,col1,"코스피")
+display_metric2(kospi200_url,ymd,col2,"코스피200")
+display_metric2(kosdaq_url,ymd,col3,"코스닥")
+
+
+
 
 
 def display_metrics(column, df,idx):
@@ -29,12 +58,9 @@ def display_metrics(column, df,idx):
     delta = f"{df['fltRt'].iloc[idx]}%({df['vs'].iloc[idx]})"
     column.metric(title, value, delta, delta_color="inverse")
 
-st.subheader("주요 증시 현황")
-kospi_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KOSPI&page=1'
-#kosdaq_url
 
-st.dataframe(pd.read_html(kospi_url,encoding='cp949')[0])
-
+st.write("")
+st.write("")
 
 st.subheader("TOP10 종목")
 tab1, tab2, tab3, tab4 = st.tabs(["📈 상승","📉 하락" , "💸 거래상위", "💰 시가총액 상위"])
