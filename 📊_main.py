@@ -41,15 +41,14 @@ kospi200_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KPI200&
 kosdaq_url ='https://finance.naver.com/sise/sise_index_day.naver?code=KOSDAQ&page='
 
 @st.cache_data
-def display_metric2(url,ymd,col,w):
+def display_metric2(url,ymd,w):
     url = url+'1'
     df = pd.read_html(url,encoding='cp949')[0]
     df = df[df['날짜']==ymd]
     title = w
     value = f"{df['체결가'].iat[0]:,}"
     delta = f"{df['등락률'].iat[0]}({df['전일비'].iat[0]})"
-    col.metric(title, value, delta, delta_color="inverse")
-    return delta
+    return title, value, delta
 
 
 ### 그래프 크게 보기 표시 제거
@@ -63,35 +62,31 @@ button[title="View fullscreen"]{
 st.markdown(hide_img_fs, unsafe_allow_html=True)
 
 @st.cache_data
-def display_chart(url,col,days=90):
-    ## 날짜 빼는 부분 약 3달
-    odt = dt- datetime.timedelta(days=days) 
+def fetch_data(url, days=90):
+    odt = dt - datetime.timedelta(days=days) 
     oymd = odt.strftime("%Y.%m.%d")
 
-    ## 20페이지 정도 불러와서 df 에 저장하고
     new_df = pd.DataFrame()
-    for i in range(1,int(days/3)):
-        new_url = url+str(i)
-        df = pd.read_html(new_url,encoding='cp949')[0]
-        new_df = pd.concat([new_df,df],ignore_index=True)
-    ## NaN 제거 및 불러온 날짜까지만
-    new_df=new_df.dropna()
+    for i in range(1, int(days/3)):
+        new_url = url + str(i)
+        df = pd.read_html(new_url, encoding='cp949')[0]
+        new_df = pd.concat([new_df, df], ignore_index=True)
 
-    graph_df = new_df[(new_df['날짜']>=oymd)&(new_df['날짜']<=ymd)].sort_values(by='날짜',ascending=True)
-    ## 데이터 준비 끝
+    new_df = new_df.dropna()
+    graph_df = new_df[(new_df['날짜'] >= oymd) & (new_df['날짜'] <= ymd)].sort_values(by='날짜', ascending=True)
+    return graph_df
 
-    #if graph_df[graph_df['날짜']==ymd]['등락률'][0]=='-':
-    ## 파랑불일지 빨간 불일지 판단
-    #pass
-    if graph_df[graph_df['날짜']==ymd]['등락률'].iloc[0][0]=='-':
+def display_chart(url, _col, days=90):
+    graph_df = fetch_data(url, days)
+
+    if graph_df[graph_df['날짜'] == ymd]['등락률'].iloc[0][0] == '-':
         color = '#007aff'
-    else : 
+    else: 
         color = '#e52300'
     
-    # 그래프 
     fig, ax = plt.subplots(figsize=(12, 5))
-    ax.plot(graph_df['날짜'], graph_df['체결가'], color = color ,linewidth=3.5, alpha=0.7)
-    poly= ax.fill_between(graph_df['날짜'], graph_df['체결가'], graph_df['체결가'].min(), alpha=0.05, color =color )
+    ax.plot(graph_df['날짜'], graph_df['체결가'], color=color, linewidth=3.5, alpha=0.7)
+    poly = ax.fill_between(graph_df['날짜'], graph_df['체결가'], graph_df['체결가'].min(), alpha=0.05, color=color)
     ylim = ax.get_ylim()
     ax.spines['top'].set_alpha(0)
     ax.spines['right'].set_alpha(0)
@@ -101,17 +96,16 @@ def display_chart(url,col,days=90):
     plt.xticks([])
     plt.yticks([])
     
-    col.pyplot(fig)
-
-
+    _col.pyplot(fig)
 
 ### 지스 메트릭 
 col1,colgap1,col2,colgap2,col3=st.columns([1,0.2,1,0.2,1])
-display_metric2(kospi_url,ymd,col1,"코스피")
-display_metric2(kosdaq_url,ymd,col2,"코스닥")
-display_metric2(kospi200_url,ymd,col3,"코스피200")
-
-
+title,value,delta=display_metric2(kospi_url,ymd,"코스피")
+col1.metric(title,value,delta,delta_color="inverse")
+title,value,delta=display_metric2(kosdaq_url,ymd,"코스닥")
+col2.metric(title,value,delta,delta_color="inverse")
+title,value,delta=display_metric2(kospi200_url,ymd,"코스피200")
+col3.metric(title,value,delta,delta_color="inverse")
 
 ### 그래프
 display_chart(kospi_url,col1)
