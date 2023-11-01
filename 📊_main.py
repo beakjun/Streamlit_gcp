@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import psycopg2
 import plotly.graph_objects as go
-
+import matplotlib.pyplot as plt
 
 
 # 페이지 설정
@@ -43,14 +43,37 @@ def display_metric2(url,ymd,col,w):
     col.metric(title, value, delta, delta_color="inverse")
     
 
-col1,col2,col3=st.columns(3)
-display_metric2(kospi_url,ymd,col1,"코스피")
-display_metric2(kospi200_url,ymd,col2,"코스피200")
-display_metric2(kosdaq_url,ymd,col3,"코스닥")
+col1,col2,col3,col4,col5,col6,col7,col8=st.columns(8)
+display_metric2(kospi_url,ymd,col2,"코스피")
+display_metric2(kosdaq_url,ymd,col5,"코스닥")
 
 
+cols1,cols2,gap1,cols3,cols4=st.columns([0.1,1,0.2,1,1])
+np.random.seed(123)
+x = np.linspace(0, 10, 200)
+y = np.random.normal(0.01, 1, 200).cumsum()
+fig, ax = plt.subplots(figsize=(12, 5))
+ax.plot(x, y,color='white')
 
+ylim = ax.get_ylim()
 
+grad1 = ax.imshow(np.linspace(0, 1, 256).reshape(-1, 1), cmap='Reds', vmin=-0.05, aspect='auto',
+                  extent=[x.min(), x.max(), 0, y.max()], origin='lower')
+poly_pos = ax.fill_between(x, y.min(), y, alpha=0.05)
+grad1.set_clip_path(poly_pos.get_paths()[0], transform=ax.transData)
+poly_pos.remove()
+plt.axis('off')
+grad2 = ax.imshow(np.linspace(0, 1, 256).reshape(-1, 1), cmap='Blues', vmin=-0.5, aspect='auto',
+                  extent=[x.min(), x.max(), y.min(), 0], origin='upper')
+poly_neg = ax.fill_between(x, y, y.max(), alpha=0.1)
+grad2.set_clip_path(poly_neg.get_paths()[0], transform=ax.transData)
+poly_neg.remove()
+
+cols2.pyplot(fig)
+cols3.pyplot(fig)
+
+st.write("")
+st.write("")
 
 def display_metrics(column, df,idx):
     title = f"{df['mrktCtg'].iloc[idx]} $\\newline$ {df['itmsNm'].iloc[idx]}"
@@ -59,8 +82,6 @@ def display_metrics(column, df,idx):
     column.metric(title, value, delta, delta_color="inverse")
 
 
-st.write("")
-st.write("")
 
 st.subheader("TOP10 종목")
 tab1, tab2, tab3, tab4 = st.tabs(["📈 상승","📉 하락" , "💸 거래상위", "💰 시가총액 상위"])
