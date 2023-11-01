@@ -13,6 +13,14 @@ def init_connection():
 
 #conn = init_connection()
 
+### 그래프 크게 보기 표시 제거
+hide_img_fs = '''
+<style>
+button[title="View fullscreen"]{
+    visibility: hidden;}
+</style>
+'''
+st.markdown(hide_img_fs, unsafe_allow_html=True)
 
 # 검색 셀레트 박스에 들어가는 리스트 생성
 @st.cache_data
@@ -25,24 +33,16 @@ def make_searchlist():
 
 # 검색 셀렉트 박스 & 보조지표 멀티박스
 placeholder = st.empty()
-col1, col2 = st.columns([1,2])
-with col1 :
-    option = st.selectbox('종목을 선택하세요',
-                   make_searchlist(),
-                   index = 1)
+
+option = st.selectbox('종목을 선택하세요',
+                make_searchlist(),
+                index = 1)
 
 
-with col2 : 
-    st.write('보조 지표')
-    col11,col_gap1,col22,col_gap1,col33=st.columns([1.5,0.1,1,3,1])
-    
-    with col11:
-        macd=st.checkbox("MACD")
-    with col22:
-        rsi=st.checkbox("RSI")
-    with col33:
-        pass
-        #rsi=st.checkbox("RSI")
+
+st.sidebar.subheader('주요지표')
+macd=st.sidebar.checkbox('MACD')
+rsi=st.sidebar.checkbox('RSI')
 
 
 ### 검색 결과 데이터 프레임 생성 
@@ -68,7 +68,7 @@ rsi_df=indicators.df
 
 placeholder1 = st.empty()
 
-placeholder1.plotly_chart(candlechart.plot_candlestick(rsi_df, '주식 캔들 차트',macd,rsi))
+placeholder1.plotly_chart(candlechart.plot_candlestick(rsi_df, '주식 캔들 차트',macd,rsi),use_container_width=True)
 
 
 
