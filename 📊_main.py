@@ -6,6 +6,15 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import datetime
 
+### 그래프 크게 보기 표시 제거
+hide_img_fs = '''
+<style>
+button[title="View fullscreen"]{
+    visibility: hidden;}
+</style>
+'''
+st.markdown(hide_img_fs, unsafe_allow_html=True)
+
 # 페이지 설정
 st.set_page_config(page_title="📊주가 현황", layout="wide")
 
@@ -51,15 +60,9 @@ def display_metric2(url,ymd,w):
     return title, value, delta
 
 
-### 그래프 크게 보기 표시 제거
-hide_img_fs = '''
-<style>
-button[title="View fullscreen"]{
-    visibility: hidden;}
-</style>
-'''
 
-st.markdown(hide_img_fs, unsafe_allow_html=True)
+
+
 
 @st.cache_data
 def fetch_data(url, days=90):
