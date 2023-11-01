@@ -91,7 +91,7 @@ def plot_candlestick(df,title,macd=False,rsi=False):
         xaxis_showticklabels=True,
         xaxis_tickformat='%Y-%m-%d',
         yaxis_tickformat = ',',
-        legend = dict(orientation = 'h', xanchor = "center", x = 0.55, y= 0.9), 
+        legend = dict(orientation = 'h', xanchor = "center", x = 0.75, y= 1), 
         barmode='group',
         yaxis=dict(domain=[0.5, 1.0], title = '주가'),          # 첫 번째 행의 y축
         yaxis2=dict(domain=[0.25, 0.40],title='거래량'),         # 두 번째 행의 y축
@@ -104,8 +104,8 @@ def plot_candlestick(df,title,macd=False,rsi=False):
             r=10, #right margin
             b=10, #bottom margin
             t=1  #top margin
-        ),)
-        #width=700,height=900)
+        ),
+        width=1000,height=700)
     num_points_to_display = 365  # 표시하려는 데이터 포인트 수
     if len(data)>=365:
         fig.update_xaxes(range=[data['basDt'].iloc[-num_points_to_display],data['basDt'].iloc[-1]])
