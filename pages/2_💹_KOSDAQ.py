@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 import candlechart
 from TechnicalIndicators import TechnicalIndicators
-
+st.set_page_config(page_title="📊주가 현황", layout="wide")
 @st.cache_resource
 def init_connection():
     return psycopg2.connect(**st.secrets["postgres"])
