@@ -14,7 +14,8 @@ def init_connection():
 #conn = init_connection()
 
 
-# 검색 셀레트 박스에 들어가는 리스트 생성 
+# 검색 셀레트 박스에 들어가는 리스트 생성
+@st.cache_data
 def make_searchlist():
     query='select distinct "itmsNm","srtnCd" from stockprice_info.kospi_stockprice_info order by "srtnCd"'
     with init_connection() as conn:
@@ -68,6 +69,8 @@ rsi_df=indicators.df
 placeholder1 = st.empty()
 
 placeholder1.plotly_chart(candlechart.plot_candlestick(rsi_df, '주식 캔들 차트',macd,rsi))
+
+
 
 placeholder.title(f'💹{option.split()[0]} 일별 주가') # 종목이름으로 타이틀
 

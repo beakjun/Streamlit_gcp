@@ -14,7 +14,8 @@ def init_connection():
 #conn = init_connection()
 
 
-# 검색 셀레트 박스에 들어가는 리스트 생성 
+# 검색 셀레트 박스에 들어가는 리스트 생성
+@st.cache_data()
 def make_searchlist():
     query='select distinct "itmsNm","srtnCd" from stockprice_info.kosdaq_stockprice_info order by "srtnCd"'
     with init_connection() as conn:
