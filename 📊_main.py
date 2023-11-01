@@ -40,7 +40,7 @@ kospi_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KOSPI&page
 kospi200_url = 'https://finance.naver.com/sise/sise_index_day.naver?code=KPI200&page='
 kosdaq_url ='https://finance.naver.com/sise/sise_index_day.naver?code=KOSDAQ&page='
 
-
+@st.cache_data
 def display_metric2(url,ymd,col,w):
     url = url+'1'
     df = pd.read_html(url,encoding='cp949')[0]
@@ -62,7 +62,7 @@ button[title="View fullscreen"]{
 
 st.markdown(hide_img_fs, unsafe_allow_html=True)
 
-
+@st.cache_data
 def display_chart(url,col,days=90):
     ## 날짜 빼는 부분 약 3달
     odt = dt- datetime.timedelta(days=days) 
