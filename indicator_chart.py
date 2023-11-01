@@ -37,8 +37,8 @@ def plot_candlestick(df,title=""):
             r=10, #right margin
             b=10, #bottom margin
             t=50  #top margin
-        ),
-        width=800)
+        ),)
+        #width=800)
     num_points_to_display = 365  # 표시하려는 데이터 포인트 수
     fig.update_layout(xaxis_range=[data['basDt'].iloc[-num_points_to_display], data['basDt'].iloc[-1]])
 

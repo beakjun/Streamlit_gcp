@@ -104,8 +104,8 @@ def plot_candlestick(df,title,macd=False,rsi=False):
             r=10, #right margin
             b=10, #bottom margin
             t=1  #top margin
-        ),
-        width=700,height=900)
+        ),)
+        #width=700,height=900)
     num_points_to_display = 365  # 표시하려는 데이터 포인트 수
     if len(data)>=365:
         fig.update_xaxes(range=[data['basDt'].iloc[-num_points_to_display],data['basDt'].iloc[-1]])
